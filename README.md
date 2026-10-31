@@ -67,6 +67,6 @@ python -m pytest -q
 
 Tests cover inference and SHAP additivity, validation, routes, persistence, batch prediction, and CSV downloads.
 
-## Screenshots
 
-Capture the report, dashboard, and batch CSV section from the running app before publishing. Avoid personal data or credentials.
+
+
