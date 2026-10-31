@@ -1,0 +1,1 @@
+"""Industrial intelligence application services."""

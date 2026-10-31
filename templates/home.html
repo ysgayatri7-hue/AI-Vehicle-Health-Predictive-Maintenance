@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Vehicle Health — Predictive Maintenance Prototype</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+<!-- ============ NAVIGATION ============ -->
+<nav class="navbar">
+  <div class="container">
+    <a href="{{ url_for('main.home') }}" class="nav-logo">
+      <span class="logo-ai">AI</span>
+      <span class="logo-main">VEHICLE HEALTH</span>
+    </a>
+    <div class="nav-links">
+      <a href="{{ url_for('main.home') }}" class="active">Home</a>
+      <a href="{{ url_for('main.predict') }}">Predict</a>
+      <a href="{{ url_for('main.dashboard') }}">Dashboard</a>
+    <a href="{{ url_for('main.about') }}">About</a>
+    </div>
+    <div class="nav-status">
+      <span class="pulse-dot"></span>
+      <span class="status-text">PROTOTYPE</span>
+    </div>
+    <button class="nav-toggle" aria-label="Toggle navigation" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+  <div class="nav-mobile-panel">
+    <a href="{{ url_for('main.home') }}" class="active">Home</a>
+    <a href="{{ url_for('main.predict') }}">Predict</a>
+    <a href="{{ url_for('main.dashboard') }}">Dashboard</a>
+    <a href="{{ url_for('main.about') }}">About</a>
+  </div>
+</nav>
+
+<!-- ============ HERO ============ -->
+<header class="hero">
+  <div class="container hero-grid">
+    <div>
+      <span class="eyebrow">AI-Powered Predictive Maintenance</span>
+      <h1 class="hero-heading">
+        Predict Failure.<br>
+        Detect Anomalies.<br>
+        <span class="accent-line">Prevent Downtime.</span>
+      </h1>
+      <p class="hero-sub">
+        An automotive-inspired AI monitoring prototype that combines machine-learning-based
+        failure prediction and anomaly detection to assess operating conditions.
+      </p>
+      <div class="hero-actions">
+        <a href="{{ url_for('main.predict') }}" class="btn btn-primary">START PREDICTION →</a>
+      <a href="{{ url_for('main.about') }}" class="btn btn-secondary">EXPLORE SYSTEM</a>
+      </div>
+    </div>
+
+    <div class="hero-visual" aria-hidden="true">
+      <div class="scan-ring r1"></div>
+      <div class="scan-ring r2"></div>
+      <div class="scan-ring r3"></div>
+      <div class="scan-sweep"></div>
+
+      <svg class="silhouette" viewBox="0 0 240 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M20 82 C22 68 34 58 50 56 L70 40 C78 33 90 29 104 29 L150 29 C166 29 180 36 190 48 L206 56 C214 59 220 66 220 74 L220 82 C220 87 216 91 211 91 L203 91 C203 79 193 69 181 69 C169 69 159 79 159 91 L91 91 C91 79 81 69 69 69 C57 69 47 79 47 91 L29 91 C24 91 20 87 20 82 Z"
+          stroke="#D7E3E8" stroke-width="1.4" fill="rgba(215,227,232,0.03)"/>
+        <circle cx="69" cy="91" r="12" stroke="#D7E3E8" stroke-width="1.4" fill="none"/>
+        <circle cx="181" cy="91" r="12" stroke="#D7E3E8" stroke-width="1.4" fill="none"/>
+      </svg>
+
+      <div class="sensor-node" style="top: 30%; left: 22%;"></div>
+      <div class="sensor-node" style="top: 55%; left: 78%;"></div>
+      <div class="sensor-node" style="top: 68%; left: 45%;"></div>
+
+      <div class="metric-float" style="top: 8%; right: 4%; animation-delay: 0s;">
+        <div class="mf-label">No live sensor feed</div>
+        <div class="mf-value">—</div>
+      </div>
+      <div class="metric-float" style="bottom: 6%; left: 2%; animation-delay: 1.2s;">
+        <div class="mf-label">Run an analysis</div>
+        <div class="mf-value">—</div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ============ SYSTEM CAPABILITIES ============ -->
+<section class="section">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="eyebrow">System Capabilities</span>
+      <h2 class="section-title">What the prototype does</h2>
+      <p class="section-desc">Four coordinated components turn raw operating parameters into an interpretable health assessment.</p>
+    </div>
+
+    <div class="card-grid">
+      <div class="cap-card reveal">
+        <span class="cap-tag">XGBoost</span>
+        <h3>Failure Prediction</h3>
+        <p>Estimate machine failure risk from operational and sensor features.</p>
+      </div>
+      <div class="cap-card reveal">
+        <span class="cap-tag">Isolation Forest</span>
+        <h3>Anomaly Detection</h3>
+        <p>Identify operating conditions that deviate from learned patterns.</p>
+      </div>
+      <div class="cap-card reveal">
+        <span class="cap-tag">SHAP</span>
+        <h3>Explainable AI</h3>
+        <p>Understand which features influence model predictions.</p>
+      </div>
+      <div class="cap-card reveal">
+        <span class="cap-tag">AI Decision Support</span>
+        <h3>Health Assessment</h3>
+        <p>Translate model outputs into an easy-to-understand health assessment.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FROM SENSOR DATA TO ACTION ============ -->
+<section class="section section-alt">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="eyebrow">Pipeline</span>
+      <h2 class="section-title">From sensor data to action</h2>
+    </div>
+
+    <div class="pipeline reveal"> <div class="pipeline-branch"> <div class="pipeline-step"><span class="step-dot"></span>Sensor Inputs</div> <div class="pipeline-arrow">↓</div> <div class="pipeline-step"><span class="step-dot"></span>Feature Engineering</div> <div class="pipeline-arrow">↓</div> <div class="pipeline-step"><span class="step-dot"></span>XGBoost</div> <div class="pipeline-arrow">↓</div> <div class="pipeline-step"><span class="step-dot"></span>Failure Risk</div> </div> <div class="pipeline-branch"> <div class="pipeline-step"><span class="step-dot"></span>Sensor Inputs</div> <div class="pipeline-arrow">↓</div> <div class="pipeline-step"><span class="step-dot"></span>Isolation Forest</div> <div class="pipeline-arrow">↓</div> <div class="pipeline-step"><span class="step-dot"></span>Anomaly Detection</div> </div> </div> <div class="pipeline-join reveal">↓</div> <div class="pipeline reveal" style="justify-content: center;"> <div class="pipeline-branch" style="max-width: 320px;"> <div class="pipeline-step"><span class="step-dot"></span>AI Health Assessment</div> <div class="pipeline-arrow">↓</div> <div class="pipeline-step"><span class="step-dot"></span>Maintenance Recommendation</div> </div> </div> </div> </section>
+    
+
+<!-- ============ FINAL CTA ============ -->
+<section class="section">
+  <div class="container">
+    <div class="cta-band reveal">
+      <h2>Ready to analyze an operating condition?</h2>
+      <a href="{{ url_for('main.predict') }}" class="btn btn-primary">OPEN AI MONITOR →</a>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FOOTER ============ -->
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-title">AI-Powered Vehicle Health Monitoring</div>
+    <div class="footer-sub">Automotive-inspired predictive-maintenance prototype</div>
+  </div>
+</footer>
+
+<script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>

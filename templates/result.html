@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Condition Report — AI Vehicle Health</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+<nav class="navbar"><div class="container">
+  <a href="{{ url_for('main.home') }}" class="nav-logo"><span class="logo-ai">AI</span><span class="logo-main">VEHICLE HEALTH</span></a>
+  <div class="nav-links"><a href="{{ url_for('main.home') }}">Home</a><a href="{{ url_for('main.predict') }}">Predict</a><a href="{{ url_for('main.dashboard') }}">Dashboard</a><a href="{{ url_for('main.about') }}">About</a></div>
+  <div class="nav-status"><span class="pulse-dot"></span><span class="status-text">PROTOTYPE</span></div>
+</div></nav>
+<header class="result-head"><div class="container">
+  <span class="eyebrow">Saved AI Diagnostic Report · #{{ prediction_id }}</span><h1 class="page-title">CONDITION REPORT</h1>
+  <p class="page-sub">Failure probability and anomaly result from the submitted operating parameters.</p>
+  <div class="result-timestamp">Recorded {{ created_at }}</div>
+</div></header>
+<main class="container">
+  <section class="metric-grid">
+    <article class="metric-card"><div class="metric-label">Failure Class</div><div class="status-pill {{ 'danger' if result.prediction == 1 else 'success' }}"><span class="dot"></span>{{ result.maintenance_status }}</div></article>
+    <article class="metric-card"><div class="metric-label">Failure Probability</div><div class="big-number">{{ "%.2f"|format(result.failure_probability * 100) }}%</div><div class="risk-bar-track"><div class="risk-bar-fill" data-value="{{ result.failure_probability * 100 }}"></div></div></article>
+    <article class="metric-card"><div class="metric-label">Derived Indicator</div><div class="big-number">{{ "%.1f"|format(result.health_score) }} / 100</div><p class="field-help">Calculated as 100 × (1 − failure probability); not a validated physical health score.</p></article>
+  </section>
+  <section class="anomaly-card"><div class="anomaly-top"><div class="metric-label">Isolation Forest</div><div class="status-pill {{ 'danger' if result.anomaly_prediction == -1 else 'success' }}"><span class="dot"></span>{{ result.anomaly_status }}</div></div><p class="anomaly-note">An anomaly is an unusual pattern relative to the model's training data, not confirmation of a failure.</p></section>
+  <section class="telemetry-card"><div class="panel-title">Operating Parameters</div><div class="telemetry-grid">
+    <div class="telemetry-item"><div class="t-label">Product Type</div><div class="t-value">{{ result.inputs.product_type }}</div></div>
+    <div class="telemetry-item"><div class="t-label">Air Temperature</div><div class="t-value">{{ result.inputs.air_temperature }} K</div></div>
+    <div class="telemetry-item"><div class="t-label">Process Temperature</div><div class="t-value">{{ result.inputs.process_temperature }} K</div></div>
+    <div class="telemetry-item"><div class="t-label">Rotational Speed</div><div class="t-value">{{ result.inputs.rotational_speed }} rpm</div></div>
+    <div class="telemetry-item"><div class="t-label">Torque</div><div class="t-value">{{ result.inputs.torque }} Nm</div></div>
+    <div class="telemetry-item"><div class="t-label">Tool Wear</div><div class="t-value">{{ result.inputs.tool_wear }} min</div></div>
+  </div></section>
+  <section class="telemetry-card"><div class="panel-title">Individual Prediction Explanation</div>
+    <p class="anomaly-note">TreeSHAP values are shown in raw model margin (log-odds). The contributions pass an additivity check against this report's XGBoost margin. Positive values push toward the failure class; negative values push away.</p>
+    <div class="shap-verified">✓ SHAP explanation verified · additivity residual {{ "%.6f"|format(result.explanation.additivity_residual) }}</div>
+    <div id="shap-waterfall" class="plot-large" role="img" aria-label="SHAP waterfall explanation for this prediction"></div>
+    <h3 class="subheading">Top three contributing features</h3><div class="feature-contributors">
+      {% for item in result.explanation.top_features %}<div class="contribution-row"><span>{{ item.feature }} <small>(value {{ "%.3f"|format(item.value) }})</small></span><strong class="{{ 'positive' if item.contribution >= 0 else 'negative' }}">{{ "%+.4f"|format(item.contribution) }}</strong></div>{% endfor %}
+    </div>
+  </section>
+  <section class="telemetry-card"><div class="panel-title">Rule-based Suggestions</div><p class="anomaly-note">These transparent prototype rules are separate from the trained model output.</p><ul class="rec-list">{% for item in result.recommendations %}<li><span class="rec-icon">•</span>{{ item }}</li>{% endfor %}</ul></section>
+  <div class="result-actions"><a href="{{ url_for('main.predict') }}" class="btn btn-secondary">← NEW ANALYSIS</a><a href="{{ url_for('main.download_prediction', prediction_id=prediction_id) }}" class="btn btn-secondary">DOWNLOAD REPORT CSV</a><a href="{{ url_for('main.dashboard') }}" class="btn btn-primary">OPEN DASHBOARD →</a></div>
+</main>
+<footer class="site-footer"><div class="container"><div class="footer-title">AI-Powered Vehicle Health Monitoring</div><div class="footer-sub">AI4I dataset prototype · Not a validated safety system</div></div></footer>
+<script src="{{ url_for('static', filename='vendor/plotly.min.js') }}"></script>
+<script id="shap-data" type="application/json">{{ shap_chart|tojson }}</script>
+<script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body></html>

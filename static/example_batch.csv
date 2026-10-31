@@ -1,0 +1,3 @@
+product_type,air_temperature,process_temperature,rotational_speed,torque,tool_wear
+M,300,310,1500,40,100
+L,302,320,1200,60,200

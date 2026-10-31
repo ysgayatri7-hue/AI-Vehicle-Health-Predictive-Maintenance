@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Condition Analyzer — AI Vehicle Health</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+<!-- ============ NAVIGATION ============ -->
+<nav class="navbar">
+  <div class="container">
+    <a href="{{ url_for('main.home') }}" class="nav-logo">
+      <span class="logo-ai">AI</span>
+      <span class="logo-main">VEHICLE HEALTH</span>
+    </a>
+    <div class="nav-links">
+      <a href="{{ url_for('main.home') }}">Home</a>
+      <a href="{{ url_for('main.predict') }}" class="active">Predict</a>
+      <a href="{{ url_for('main.dashboard') }}">Dashboard</a>
+    <a href="{{ url_for('main.about') }}">About</a>
+    </div>
+    <div class="nav-status">
+      <span class="pulse-dot"></span>
+      <span class="status-text">PROTOTYPE</span>
+    </div>
+    <button class="nav-toggle" aria-label="Toggle navigation" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+  <div class="nav-mobile-panel">
+    <a href="{{ url_for('main.home') }}">Home</a>
+    <a href="{{ url_for('main.predict') }}" class="active">Predict</a>
+    <a href="{{ url_for('main.dashboard') }}">Dashboard</a>
+    <a href="{{ url_for('main.about') }}">About</a>
+  </div>
+</nav>
+
+<!-- ============ PAGE HEAD ============ -->
+<header class="page-head">
+  <div class="container">
+    <span class="eyebrow">AI Condition Analyzer</span>
+    <h1 class="page-title">AI CONDITION ANALYZER</h1>
+    <p class="page-sub">Enter operating parameters to estimate failure risk and detect abnormal conditions.</p>
+  </div>
+</header>
+
+<!-- ============ ANALYZER ============ -->
+<section class="container analyzer-grid">
+
+  {% if error %}<div class="form-error" role="alert">{{ error }}</div>{% endif %}
+
+  <!-- LEFT: OPERATING PARAMETERS -->
+  <div class="panel">
+    <div class="panel-title">Operating Parameters</div>
+
+    <form action="{{ url_for('main.predict') }}" method="POST" id="analyzerForm">
+
+      <div class="field">
+        <label for="product_type">Product Type</label>
+        <select id="product_type" name="product_type">
+          <option value="L">L</option>
+          <option value="M" selected>M</option>
+          <option value="H">H</option>
+        </select>
+        <div class="field-help">Product quality/type category used during model training.</div>
+      </div>
+
+      <div class="field-row">
+        <div class="field">
+          <label for="air_temperature">Air Temperature [K]</label>
+          <input type="number" step="0.1" min="250" max="350" id="air_temperature" name="air_temperature" placeholder="e.g. 300.5" value="{{ submitted.get('air_temperature', '') if submitted else '' }}" required>
+        </div>
+        <div class="field">
+          <label for="process_temperature">Process Temperature [K]</label>
+          <input type="number" step="0.1" min="250" max="400" id="process_temperature" name="process_temperature" placeholder="e.g. 310.2" value="{{ submitted.get('process_temperature', '') if submitted else '' }}" required>
+        </div>
+      </div>
+
+      <div class="field-row">
+        <div class="field">
+          <label for="rotational_speed">Rotational Speed [rpm]</label>
+          <input type="number" step="1" min="0" max="10000" id="rotational_speed" name="rotational_speed" placeholder="e.g. 1500" value="{{ submitted.get('rotational_speed', '') if submitted else '' }}" required>
+        </div>
+        <div class="field">
+          <label for="torque">Torque [Nm]</label>
+          <input type="number" step="0.1" min="0" max="500" id="torque" name="torque" placeholder="e.g. 40" value="{{ submitted.get('torque', '') if submitted else '' }}" required>
+          <div class="field-help">Mechanical load applied during operation.</div>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="tool_wear">Tool Wear [min]</label>
+        <input type="number" step="1" min="0" max="10000" id="tool_wear" name="tool_wear" placeholder="e.g. 100" value="{{ submitted.get('tool_wear', '') if submitted else '' }}" required>
+        <div class="field-help">Accumulated tool/component wear indicator.</div>
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary">ANALYZE CONDITION →</button>
+        <button type="button" id="randomTestBtn" class="btn btn-secondary" data-mode="scenario">LOAD TEST SCENARIO</button>
+      </div>
+      <button type="button" id="randomModeToggle" class="btn btn-secondary btn-block" style="margin-top: 10px; font-size: 12.5px; opacity: 0.75;">
+        Switch to fully random values
+      </button>
+    </form>
+  </div>
+
+  <!-- RIGHT: AI MONITOR -->
+  <div class="panel">
+    <div class="panel-title">AI Monitor</div>
+
+    <div class="monitor-visual" aria-hidden="true">
+      <div class="monitor-ring">
+        <div class="mr-label">AWAITING<br>INPUT</div>
+      </div>
+    </div>
+
+    <div class="mini-pipeline">
+      <div class="mini-step"><span class="step-num">01</span> Inputs</div>
+      <div class="mini-step"><span class="step-num">02</span> Feature Engineering</div>
+      <div class="mini-step"><span class="step-num">03</span> XGBoost</div>
+      <div class="mini-step"><span class="step-num">04</span> Isolation Forest</div>
+      <div class="mini-step"><span class="step-num">05</span> Health Assessment</div>
+    </div>
+
+    <p class="monitor-note" style="margin-top: 20px;">
+      Results are generated by the trained predictive-maintenance prototype.
+    </p>
+  </div>
+
+</section>
+
+<section class="container batch-section">
+  <div class="telemetry-card">
+    <div class="panel-title">Batch CSV Predictions <span class="optional-tag">up to 1,000 rows</span></div>
+    <p class="anomaly-note">Upload one row per operating condition. Required columns: product_type, air_temperature, process_temperature, rotational_speed, torque, tool_wear. Original AI4I column labels are also accepted.</p>
+    <form action="{{ url_for('main.batch_predict') }}" method="POST" enctype="multipart/form-data" class="batch-form">
+      <label for="batch-file">CSV file</label><input id="batch-file" name="file" type="file" accept=".csv,text/csv" required>
+      <button class="btn btn-secondary" type="submit">RUN BATCH & DOWNLOAD CSV</button>
+      <a class="table-link" href="{{ url_for('static', filename='example_batch.csv') }}" download>Download example CSV</a>
+    </form>
+  </div>
+</section>
+
+<!-- ============ FOOTER ============ -->
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-title">AI-Powered Vehicle Health Monitoring</div>
+    <div class="footer-sub">Automotive-inspired predictive-maintenance prototype</div>
+  </div>
+</footer>
+
+<script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>
